@@ -44,9 +44,13 @@ def run() -> None:
     consumer = create_consumer(group_id="stream-processor", topics=[STOCK_TICKS])
     producer = create_producer()
     detector = AnomalyDetector()
+    # Long-lived store so rolling windows survive across ticks (and after warm-start).
+    store = FeatureStore()
+    with get_db() as session:
+        ticks_loaded = store.warm_start(Repository(session))
     signal.signal(signal.SIGINT, _shutdown)
     signal.signal(signal.SIGTERM, _shutdown)
-    logger.info("stream_processor_started")
+    logger.info("stream_processor_started", warm_start_ticks=ticks_loaded)
 
     while _running:
         start = time.time()
@@ -61,8 +65,7 @@ def run() -> None:
             tick = StockTickEvent.model_validate(data)
             with get_db() as session:
                 repo = Repository(session)
-                store = FeatureStore(repo)
-                features = store.process_tick(tick)
+                features = store.process_tick(tick, repo=repo)
                 publish_event(producer, STOCK_FEATURES, features.symbol, features)
                 FEATURES_COMPUTED.labels(symbol=features.symbol).inc()
                 SYMBOL_VOLATILITY.labels(symbol=features.symbol).set(features.volatility)
