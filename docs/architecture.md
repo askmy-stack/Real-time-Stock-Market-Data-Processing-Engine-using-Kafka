@@ -35,6 +35,8 @@ Mock Producers → Redpanda Topics → Consumers/Processor → PostgreSQL → Fa
 
 PostgreSQL stores ticks, features, anomalies, news, context, and briefs for API and MCP queries.
 
+On stream-processor startup, `FeatureStore.warm_start` replays the latest `rolling_window_size` ticks per symbol from PostgreSQL into in-memory rolling windows so features are not cold after a restart.
+
 ## Observability
 
 - Structured logging via `structlog`
