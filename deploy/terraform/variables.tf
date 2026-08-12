@@ -49,3 +49,14 @@ variable "kafka_bootstrap_servers" {
   description = "External Kafka/Redpanda bootstrap servers"
   default     = ""
 }
+
+variable "alb_port" {
+  type    = number
+  default = 80
+}
+
+variable "api_key" {
+  type      = string
+  sensitive = true
+  default   = ""
+}

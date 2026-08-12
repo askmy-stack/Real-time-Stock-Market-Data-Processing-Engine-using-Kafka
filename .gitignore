@@ -22,5 +22,8 @@ build/
 # OS
 .DS_Store
 
+# Terraform
+.terraform/
+
 # Data (large files tracked separately)
 # indexProcessed.csv is kept in repo from original project
