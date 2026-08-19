@@ -29,8 +29,9 @@ Managed Kafka (MSK) adds significant cost and operational overhead. For most con
 ```bash
 cd deploy/terraform
 terraform init
-terraform plan -var-file=terraform.tfvars.example
-# terraform apply  # after customizing variables
+terraform validate
+terraform plan
+terraform apply
 ```
 
 ## Modules
